@@ -9,7 +9,10 @@
 	str_inv_op:    .asciiz "\nOperacao invalida. Digite I, D ou F (maiusculo ou minusculo).\n"
 	Valor1_int:    .word   00000000
 	Valor2_int:    .word   00000000
-	Result:        .word   00000000
+	Valor1_float:  .float  00000000
+	Valor2_float:  .float  00000000
+	Result_int:    .word   00000000
+	Result_float:  .float  00000000
 	
 .text
 .globl main
@@ -109,8 +112,41 @@ check_op_int:
 	li  $t0, 33
 	beq $s1, $t0, int_invert
 
-
+# Le os floats do usuario
 get_data_float:
+	# Le o valor1
+	li $v0, 6
+	syscall
+	# Armazena na memoria
+	sw $f0, Valor1_float
+
+	# Le o valor2
+	li $v0, 6
+	syscall
+	# Armazena na memoria
+	sw $f0, Valor2_float
+
+# Checa qual operacao sera' realizada com os floats
+check_op_float:
+	# Checa se e' soma ($t0 = '+')
+	li  $t0, 43
+	beq $s1, $t0, float_sum
+
+	# Checa se e' subtracao ($t0 = '-')
+	li  $t0, 45
+	beq $s1, $t0, float_subtract
+
+	# Checa se e' multiplicacao ($t0 = '*')
+	li  $t0, 42
+	beq $s1, $t0, float_multiply
+
+	# Checa se e' divisao ($t0 = '/')
+	li  $t0, 47
+	beq $s1, $t0, float_divide
+
+	# Checa se e' divisao ($t0 = '!')
+	li  $t0, 33
+	beq $s1, $t0, float_invert
 
 get_data_double:
 
@@ -119,9 +155,15 @@ int_sum:
 	lw  $t0, Valor1_int
 	lw  $t1, Valor2_int
 	add $t2, $t0, $t1
-	sw  $t2, Result
+	sw  $t2, Result_int
 
+# Soma de floats
 float_sum:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	add.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
 double_sum:
 
 # Subtracao de inteiros
@@ -129,9 +171,16 @@ int_subtract:
 	lw  $t0, Valor1_int
 	lw  $t1, Valor2_int
 	sub $t2, $t0, $t1
-	sw  $t2, Result
+	sw  $t2, Result_int
 
+# Subtracao de floats
 float_sub:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	sub.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
+
 double_sub:
 
 # Multiplicacao de inteiros
@@ -143,9 +192,15 @@ int_multiply:
 	# CHECAR OVERFLOW AQUI (mfhi)
 	# ******************************************************************************
 	mflo $t2
-	sw   $t2, Result
+	sw   $t2, Result_int
 
+# Multiplicacao de floats
 float_mult:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	mul.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
 double_mult:
 
 # Divisao de inteiros
@@ -154,10 +209,15 @@ int_divide:
 	lw   $t1, Valor2_int
 	div  $t0, $t1
 	mflo $t2
-	sw   $t2, Result
+	sw   $t2, Result_int
 
-
+# Divisao de floats
 float_div:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	div.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
 double_div:
 
 # Inverte o sinal de inteiro
@@ -166,7 +226,31 @@ int_invert:
 	li  $t1, 0
 	add $t1, $t0, $t0 # $t1 = 2 * valor1
 	sub $t2, $t0, $t1 # $t2 = valor1 - 2*valor1 = -valor1
-	sw  $t2, Result
+	sw  $t2, Result_int
+
+float_invert:
+	l.s   $f0, Valor1_float
+	neg.s $f4, $f0
+	s.s   $f4, Result_float	
+
+# Imprime o inteiro resultante
+print_result_int:
+	lw $a0, Result_int
+	li $v0, 1
+	syscall
+	# **********************************************************************
+	# j REPEAT
+
+# Imprime o float resultante
+print_result_float:
+	l.s $f12, Result_float
+	li  $v0, 2
+	syscall
+	# **********************************************************************
+	# j REPEAT
+
+
+print_result_double:
 
 finish:
 	# Imprime a string "End of Program"
