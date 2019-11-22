@@ -4,6 +4,7 @@
 .data
 	str_data_type: .asciiz "DataType:"
 	str_operation: .asciiz "Operation:"
+	str_result:    .asciiz "Result:"
 	str_end:       .asciiz "End of Program\n"
 	str_inv_op:    .asciiz "\nOperacao invalida. Digite I, D ou F (maiusculo ou minusculo).\n"
 	Valor1_int:    .word   00000000
@@ -90,131 +91,82 @@ get_data_int:
 check_op_int:
 	# Checa se e' soma ($t0 = '+')
 	li  $t0, 43
-	beq $s1, $t0, integer_sum
+	beq $s1, $t0, int_sum
 
 	# Checa se e' subtracao ($t0 = '-')
 	li  $t0, 45
-	beq $s1, $t0, integer_sub
+	beq $s1, $t0, int_subtract
 
 	# Checa se e' multiplicacao ($t0 = '*')
 	li  $t0, 42
-	beq $s1, $t0, integer_mult
+	beq $s1, $t0, int_multiply
 
 	# Checa se e' divisao ($t0 = '/')
 	li  $t0, 47
-	beq $s1, $t0, integer_div
+	beq $s1, $t0, int_divide
 
 	# Checa se e' divisao ($t0 = '!')
 	li  $t0, 33
-	beq $s1, $t0, integer_invert
+	beq $s1, $t0, int_invert
 
 
 get_data_float:
 
 get_data_double:
-	# # Checa se e' soma ($t0 = '+')
-	# li  $t0, 43
-	# beq $s1, $t0, sum
 
-	# # Checa se e' subtracao ($t0 = '-')
-	# li  $t0, 45
-	# beq $s1, $t0, subtract
-
-	# # Checa se e' multiplicacao ($t0 = '*')
-	# li $t0, 42
-	# beq $s1, $t0, multiply
-
-	# # Checa se e' divisao ($t0 = '/')
-	# li $t0, 47
-	# beq $s1, $t0, divide
-
-# Checa qual o tipo de dado para somar
-sum:
-	# Checa se a operacao e' com inteiro
-	li $t1, 73  # $t1 = 'I'
-	li $t2, 105 # $t2 = 'i'
-	beq $s0, $t1, integer_sum
-	beq $s0, $t2, integer_sum
-	
-	# Checa se a operacao e' com float
-	li  $t1, 70  # $t1 = 'F'
-	li  $t2, 102 # $t2 = 'f'
-	beq $s0, $t1, float_sum
-	beq $s0, $t2, float_sum
-	
-	# Checa se a operacao e' com double
-	li  $t1, 68  # $t1 = 'D'
-	li  $t2, 100 # $t2 = 'd'
-	beq $s0, $t1, double_sum
-	beq $s0, $t2, double_sum
-
-# Checa qual o tipo de dado para subtrair
-subtract:
-	# Checa se a operacao e' com inteiro
-	li $t1, 73  # $t1 = 'I'
-	li $t2, 105 # $t2 = 'i'
-	beq $s0, $t1, integer_sum
-	beq $s0, $t2, integer_sum
-	
-	# Checa se a operacao e' com float
-	li  $t1, 70  # $t1 = 'F'
-	li  $t2, 102 # $t2 = 'f'
-	beq $s0, $t1, float_sum
-	beq $s0, $t2, float_sum
-	
-	# Checa se a operacao e' com double
-	li  $t1, 68  # $t1 = 'D'
-	li  $t2, 100 # $t2 = 'd'
-	beq $s0, $t1, double_sum
-	beq $s0, $t2, double_sum
-
-multiply:
-divide:
-
-# Soma com inteiros
-integer_sum:
-	# Le o valor1
-	li $v0, 5
-	syscall
-	# Armazena na memoria
-	sw $v0, Valor1_int
-	# Imprime o valor em hexadecimal
-	lw $a0, Valor1_int
-	li $v0, 34
-	syscall
-
-	# Le o valor2
-	li $v0, 5
-	syscall
-	# Armazena na memoria
-	sw $v0, Valor2_int
-	# Imprime o valor em hexadecimal
-	lw $a0, Valor2_int
-	li $v0, 34
-	syscall
-	
-	# Realiza a soma
+# Soma de inteiros
+int_sum:
 	lw  $t0, Valor1_int
 	lw  $t1, Valor2_int
-	add $t3, $t0, $t1
-	sw  $t3, Result
+	add $t2, $t0, $t1
+	sw  $t2, Result
 
 float_sum:
 double_sum:
 
-integer_sub:
-
+# Subtracao de inteiros
+int_subtract:
+	lw  $t0, Valor1_int
+	lw  $t1, Valor2_int
+	sub $t2, $t0, $t1
+	sw  $t2, Result
 
 float_sub:
 double_sub:
 
-integer_mult:
+# Multiplicacao de inteiros
+int_multiply:
+	lw   $t0, Valor1_int
+	lw   $t1, Valor2_int
+	mult $t0, $t1
+	# ******************************************************************************
+	# CHECAR OVERFLOW AQUI (mfhi)
+	# ******************************************************************************
+	mflo $t2
+	sw   $t2, Result
+
 float_mult:
 double_mult:
 
-integer_div:
+# Divisao de inteiros
+int_divide:
+	lw   $t0, Valor1_int
+	lw   $t1, Valor2_int
+	div  $t0, $t1
+	mflo $t2
+	sw   $t2, Result
+
+
 float_div:
 double_div:
+
+# Inverte o sinal de inteiro
+int_invert:
+	lw  $t0, Valor1_int
+	li  $t1, 0
+	add $t1, $t0, $t0 # $t1 = 2 * valor1
+	sub $t2, $t0, $t1 # $t2 = valor1 - 2*valor1 = -valor1
+	sw  $t2, Result
 
 finish:
 	# Imprime a string "End of Program"
