@@ -2,6 +2,7 @@
 # $s1 = operacao (+, -, *, /, !)
 
 .data
+	str_new_line:  .asciiz "\n"
 	str_data_type: .asciiz "DataType:"
 	str_operation: .asciiz "Operation:"
 	str_result:    .asciiz "Result:"
@@ -29,6 +30,11 @@ get_type:
 	syscall
 	# Guarda o tipo de dado em $s0
 	move $s0, $v0
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
 	
 get_op:
 	# Imprime a string "Operation:"
@@ -41,6 +47,11 @@ get_op:
 	syscall
 	# Guarda operacao em $s1
 	move $s1, $v0
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
 
 	# Checa se a operacao e' com inteiro
 	li  $t1, 73  # $t1 = 'I'
@@ -80,6 +91,11 @@ get_data_int:
 	li $v0, 34
 	syscall
 
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
+
 	# Le o valor2
 	li $v0, 5
 	syscall
@@ -88,6 +104,11 @@ get_data_int:
 	# Imprime o valor em hexadecimal
 	lw $a0, Valor2_int
 	li $v0, 34
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
 	syscall
 
 # Checa qual operacao sera' realizada com os inteiros
@@ -118,13 +139,13 @@ get_data_float:
 	li $v0, 6
 	syscall
 	# Armazena na memoria
-	sw $f0, Valor1_float
+	s.s $f0, Valor1_float
 
 	# Le o valor2
 	li $v0, 6
 	syscall
 	# Armazena na memoria
-	sw $f0, Valor2_float
+	s.s $f0, Valor2_float
 
 # Checa qual operacao sera' realizada com os floats
 check_op_float:
@@ -174,7 +195,7 @@ int_subtract:
 	sw  $t2, Result_int
 
 # Subtracao de floats
-float_sub:
+float_subtract:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	sub.s $f4, $f0, $f2
@@ -195,7 +216,7 @@ int_multiply:
 	sw   $t2, Result_int
 
 # Multiplicacao de floats
-float_mult:
+float_multiply:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	mul.s $f4, $f0, $f2
@@ -212,13 +233,13 @@ int_divide:
 	sw   $t2, Result_int
 
 # Divisao de floats
-float_div:
+float_divide:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	div.s $f4, $f0, $f2
 	s.s   $f4, Result_float
 
-double_div:
+double_divide:
 
 # Inverte o sinal de inteiro
 int_invert:
