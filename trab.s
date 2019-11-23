@@ -4,6 +4,8 @@
 .data
 	str_new_line:  .asciiz "\n"
 	str_space:     .asciiz " "
+	str_open_par:  .asciiz "("
+	str_close_par: .asciiz ")"
 	str_data_type: .asciiz "DataType: "
 	str_operation: .asciiz "Operation: "
 	str_result:    .asciiz "Result: "
@@ -415,8 +417,25 @@ print_result_int:
 	li $v0, 4
 	syscall
 
+	# Imprime em hexadecimal
 	lw $a0, Result_int
 	li $v0, 34
+	syscall
+
+	# Espaco
+	la $a0, str_space
+	li $v0, 4
+	syscall
+
+	# Imprime o resultado em decimal tambem
+	la $a0, str_open_par
+	li $v0, 4
+	syscall
+	lw $a0, Result_int
+	li $v0, 1
+	syscall
+	la $a0, str_close_par
+	li $v0, 4
 	syscall
 
 	# Quebra de linha
@@ -437,6 +456,22 @@ print_result_float:
 	l.s  $f0, Result_float
 	mfc1 $a0, $f0
 	li   $v0, 34
+	syscall
+
+	# Espaco
+	la $a0, str_space
+	li $v0, 4
+	syscall
+
+	# Imprime o resultado em decimal tambem
+	la $a0, str_open_par
+	li $v0, 4
+	syscall
+	l.s $f12, Result_float
+	li $v0, 2
+	syscall
+	la $a0, str_close_par
+	li $v0, 4
 	syscall
 
 	# Quebra de linha
@@ -465,6 +500,22 @@ print_result_double:
 	# Imprime a segunda parte em hexadecimal
 	mfc1 $a0, $f1
 	li   $v0, 34
+	syscall
+
+	# Espaco
+	la $a0, str_space
+	li $v0, 4
+	syscall
+
+	# Imprime o resultado em decimal tambem
+	la $a0, str_open_par
+	li $v0, 4
+	syscall
+	l.d $f12, Result_double
+	li $v0, 3
+	syscall
+	la $a0, str_close_par
+	li $v0, 4
 	syscall
 
 	# Quebra de linha
