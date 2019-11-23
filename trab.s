@@ -9,12 +9,19 @@
 	str_end:       .asciiz "End of Program\n"
 	str_repeat:    .asciiz "Repeat? Y = Yes, N = No: "
 	str_inv_op:    .asciiz "\nOperacao invalida. Digite I, D ou F (maiusculo ou minusculo).\n"
+
 	Valor1_int:    .word   00000000
 	Valor2_int:    .word   00000000
+
 	Valor1_float:  .float  00000000
 	Valor2_float:  .float  00000000
+
+	Valor1_double: .double 0000000000000000
+	Valor2_double: .double 0000000000000000
+
 	Result_int:    .word   00000000
 	Result_float:  .float  00000000
+	Result_double: .double 0000000000000000
 	
 .text
 .globl main
@@ -170,10 +177,42 @@ check_op_float:
 	li  $t0, 33
 	beq $s1, $t0, float_invert
 
-# Checa qual operacao sera' realizada com os doubles
+# Le os doubles do usuario
 get_data_double:
+	# Le o valor1
+	li $v0, 7
+	syscall
+	# Armazena na memoria
+	s.d $f0, Valor1_double
 
+	# Le o valor2
+	li $v0, 7
+	syscall
+	# Armazena na memoria
+	s.d $f0, Valor2_double
+
+
+# Checa qual operacao sera' realizada com os doubles
 check_op_double:
+	# Checa se e' soma ($t0 = '+')
+	li  $t0, 43
+	beq $s1, $t0, double_sum
+
+	# Checa se e' subtracao ($t0 = '-')
+	li  $t0, 45
+	beq $s1, $t0, double_subtract
+
+	# Checa se e' multiplicacao ($t0 = '*')
+	li  $t0, 42
+	beq $s1, $t0, double_multiply
+
+	# Checa se e' divisao ($t0 = '/')
+	li  $t0, 47
+	beq $s1, $t0, double_divide
+
+	# Checa se e' divisao ($t0 = '!')
+	li  $t0, 33
+	beq $s1, $t0, double_invert
 
 # Soma de inteiros
 int_sum:
@@ -195,6 +234,13 @@ float_sum:
 
 # Soma de doubles
 double_sum:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	add.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
+
 
 # Subtracao de inteiros
 int_subtract:
@@ -216,6 +262,13 @@ float_subtract:
 
 # Subtracao de doubles
 double_sub:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	sub.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
+
 
 # Multiplicacao de inteiros
 int_multiply:
@@ -241,7 +294,13 @@ float_multiply:
 	j print_result_float
 
 # Multiplicacao de doubles
-double_mult:
+double_multiply:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	mul.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
 
 # Divisao de inteiros
 int_divide:
@@ -264,6 +323,12 @@ float_divide:
 
 # Divisao de doubles
 double_divide:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	div.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
 
 # Inverte o sinal de inteiro
 int_invert:
@@ -285,7 +350,11 @@ float_invert:
 
 # Inverte o sinal de double
 double_invert:
+	l.d   $f0, Valor1_double
+	neg.d $f4, $f0
+	s.d   $f4, Result_double	
 
+	j print_result_double
 
 # Imprime o inteiro resultante
 print_result_int:
@@ -303,8 +372,11 @@ print_result_float:
 
 	j repeat
 
-
+# Imprime o double resultante
 print_result_double:
+	l.d $f12, Result_double
+	li $v0, 3
+	syscall
 
 # Checa se o usuario quer fazer outra operacao
 repeat:
