@@ -78,7 +78,7 @@ invalid_op:
 	la $a0, str_inv_op
 	syscall
 
-	j repeat
+	j finish
 
 # Le os valores inteiros do usuario
 get_data_int:
@@ -170,6 +170,7 @@ check_op_float:
 	li  $t0, 33
 	beq $s1, $t0, float_invert
 
+# Checa qual operacao sera' realizada com os doubles
 get_data_double:
 
 check_op_double:
@@ -192,6 +193,7 @@ float_sum:
 
 	j print_result_float
 
+# Soma de doubles
 double_sum:
 
 # Subtracao de inteiros
@@ -212,7 +214,7 @@ float_subtract:
 
 	j print_result_float
 
-
+# Subtracao de doubles
 double_sub:
 
 # Multiplicacao de inteiros
@@ -238,7 +240,7 @@ float_multiply:
 
 	j print_result_float
 
-
+# Multiplicacao de doubles
 double_mult:
 
 # Divisao de inteiros
@@ -260,6 +262,7 @@ float_divide:
 
 	j print_result_float
 
+# Divisao de doubles
 double_divide:
 
 # Inverte o sinal de inteiro
@@ -272,12 +275,17 @@ int_invert:
 
 	j print_result_int
 
+# Inverte o sinal de float
 float_invert:
 	l.s   $f0, Valor1_float
 	neg.s $f4, $f0
 	s.s   $f4, Result_float	
 
 	j print_result_float
+
+# Inverte o sinal de double
+double_invert:
+
 
 # Imprime o inteiro resultante
 print_result_int:
