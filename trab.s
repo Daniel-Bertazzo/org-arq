@@ -148,12 +148,30 @@ get_data_float:
 	syscall
 	# Armazena na memoria
 	s.s $f0, Valor1_float
+	# Imprime em hexadecimal
+	mfc1 $a0, $f0
+	li   $v0, 34
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
 
 	# Le o valor2
 	li $v0, 6
 	syscall
 	# Armazena na memoria
 	s.s $f0, Valor2_float
+	# Imprime em hexadecimal	
+	mfc1 $a0, $f0
+	li $v0, 34
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
 
 # Checa qual operacao sera' realizada com os floats
 check_op_float:
@@ -261,7 +279,7 @@ float_subtract:
 	j print_result_float
 
 # Subtracao de doubles
-double_sub:
+double_subtract:
 	l.d   $f0, Valor1_double
 	l.d   $f2, Valor2_double
 	sub.d $f4, $f0, $f2
@@ -359,15 +377,27 @@ double_invert:
 # Imprime o inteiro resultante
 print_result_int:
 	lw $a0, Result_int
-	li $v0, 1
+	li $v0, 34
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
 	syscall
 
 	j repeat
 
 # Imprime o float resultante
 print_result_float:
-	l.s $f12, Result_float
-	li  $v0, 2
+	# Imprime em hexadecimal
+	l.s  $f0, Result_float
+	mfc1 $a0, $f0
+	li   $v0, 34
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
 	syscall
 
 	j repeat
@@ -377,6 +407,13 @@ print_result_double:
 	l.d $f12, Result_double
 	li $v0, 3
 	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
+
+	j repeat
 
 # Checa se o usuario quer fazer outra operacao
 repeat:
@@ -394,6 +431,11 @@ repeat:
 	li $v0, 12
 	syscall
 	move $s0, $v0
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
 
 	# Checa se usuario escolheu continuar a execucao
 	# Caso nao queira, apenas termina o programa
