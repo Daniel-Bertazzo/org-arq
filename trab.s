@@ -315,12 +315,12 @@ repeat:
 	syscall
 	move $s0, $v0
 
+	# Checa se usuario escolheu continuar a execucao
+	# Caso nao queira, apenas termina o programa
 	li $t0, 89  # $t0 = Y
 	li $t1, 121 # $t1 = y
 	beq $s0, $t0, get_type
 	beq $s0, $t1, get_type
-	
-
 
 finish:
 	# Imprime a string "End of Program"
