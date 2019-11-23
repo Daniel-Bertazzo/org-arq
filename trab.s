@@ -3,10 +3,11 @@
 
 .data
 	str_new_line:  .asciiz "\n"
-	str_data_type: .asciiz "DataType:"
-	str_operation: .asciiz "Operation:"
-	str_result:    .asciiz "Result:"
+	str_data_type: .asciiz "DataType: "
+	str_operation: .asciiz "Operation: "
+	str_result:    .asciiz "Result: "
 	str_end:       .asciiz "End of Program\n"
+	str_repeat:    .asciiz "Repeat? Y = Yes, N = No: "
 	str_inv_op:    .asciiz "\nOperacao invalida. Digite I, D ou F (maiusculo ou minusculo).\n"
 	Valor1_int:    .word   00000000
 	Valor2_int:    .word   00000000
@@ -77,7 +78,7 @@ invalid_op:
 	la $a0, str_inv_op
 	syscall
 
-	j finish
+	j repeat
 
 # Le os valores inteiros do usuario
 get_data_int:
@@ -171,6 +172,8 @@ check_op_float:
 
 get_data_double:
 
+check_op_double:
+
 # Soma de inteiros
 int_sum:
 	lw  $t0, Valor1_int
@@ -178,12 +181,16 @@ int_sum:
 	add $t2, $t0, $t1
 	sw  $t2, Result_int
 
+	j print_result_int
+
 # Soma de floats
 float_sum:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	add.s $f4, $f0, $f2
 	s.s   $f4, Result_float
+
+	j print_result_float
 
 double_sum:
 
@@ -194,12 +201,16 @@ int_subtract:
 	sub $t2, $t0, $t1
 	sw  $t2, Result_int
 
+	j print_result_int
+
 # Subtracao de floats
 float_subtract:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	sub.s $f4, $f0, $f2
 	s.s   $f4, Result_float
+
+	j print_result_float
 
 
 double_sub:
@@ -215,12 +226,18 @@ int_multiply:
 	mflo $t2
 	sw   $t2, Result_int
 
+	j print_result_int
+
+
 # Multiplicacao de floats
 float_multiply:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	mul.s $f4, $f0, $f2
 	s.s   $f4, Result_float
+
+	j print_result_float
+
 
 double_mult:
 
@@ -232,12 +249,16 @@ int_divide:
 	mflo $t2
 	sw   $t2, Result_int
 
+	j print_result_int
+
 # Divisao de floats
 float_divide:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	div.s $f4, $f0, $f2
 	s.s   $f4, Result_float
+
+	j print_result_float
 
 double_divide:
 
@@ -249,29 +270,57 @@ int_invert:
 	sub $t2, $t0, $t1 # $t2 = valor1 - 2*valor1 = -valor1
 	sw  $t2, Result_int
 
+	j print_result_int
+
 float_invert:
 	l.s   $f0, Valor1_float
 	neg.s $f4, $f0
 	s.s   $f4, Result_float	
+
+	j print_result_float
 
 # Imprime o inteiro resultante
 print_result_int:
 	lw $a0, Result_int
 	li $v0, 1
 	syscall
-	# **********************************************************************
-	# j REPEAT
+
+	j repeat
 
 # Imprime o float resultante
 print_result_float:
 	l.s $f12, Result_float
 	li  $v0, 2
 	syscall
-	# **********************************************************************
-	# j REPEAT
+
+	j repeat
 
 
 print_result_double:
+
+# Checa se o usuario quer fazer outra operacao
+repeat:
+	# Imprime string "Repeat? Y = Yes, N = No"
+	li $v0, 4
+	la $a0, str_repeat
+	syscall
+
+	# Quebra de linha
+	li $v0, 4
+	la $a0, str_new_line
+	syscall
+
+	# Le a resposta e armazena em $s0
+	li $v0, 12
+	syscall
+	move $s0, $v0
+
+	li $t0, 89  # $t0 = Y
+	li $t1, 121 # $t1 = y
+	beq $s0, $t0, get_type
+	beq $s0, $t1, get_type
+	
+
 
 finish:
 	# Imprime a string "End of Program"
