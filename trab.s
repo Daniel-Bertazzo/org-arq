@@ -268,6 +268,9 @@ check_op_double:
 	li  $t0, 33
 	beq $s1, $t0, double_invert
 
+
+#  .....:: OPERACOES COM INTEIROS ::.....  #
+
 # Soma de inteiros
 int_sum:
 	lw  $t0, Valor1_int
@@ -277,25 +280,6 @@ int_sum:
 
 	j print_result_int
 
-# Soma de floats
-float_sum:
-	l.s   $f0, Valor1_float
-	l.s   $f2, Valor2_float
-	add.s $f4, $f0, $f2
-	s.s   $f4, Result_float
-
-	j print_result_float
-
-# Soma de doubles
-double_sum:
-	l.d   $f0, Valor1_double
-	l.d   $f2, Valor2_double
-	add.d $f4, $f0, $f2
-	s.d   $f4, Result_double
-
-	j print_result_double
-
-
 # Subtracao de inteiros
 int_subtract:
 	lw  $t0, Valor1_int
@@ -304,25 +288,6 @@ int_subtract:
 	sw  $t2, Result_int
 
 	j print_result_int
-
-# Subtracao de floats
-float_subtract:
-	l.s   $f0, Valor1_float
-	l.s   $f2, Valor2_float
-	sub.s $f4, $f0, $f2
-	s.s   $f4, Result_float
-
-	j print_result_float
-
-# Subtracao de doubles
-double_subtract:
-	l.d   $f0, Valor1_double
-	l.d   $f2, Valor2_double
-	sub.d $f4, $f0, $f2
-	s.d   $f4, Result_double
-
-	j print_result_double
-
 
 # Multiplicacao de inteiros
 int_multiply:
@@ -337,25 +302,6 @@ int_multiply:
 
 	j print_result_int
 
-
-# Multiplicacao de floats
-float_multiply:
-	l.s   $f0, Valor1_float
-	l.s   $f2, Valor2_float
-	mul.s $f4, $f0, $f2
-	s.s   $f4, Result_float
-
-	j print_result_float
-
-# Multiplicacao de doubles
-double_multiply:
-	l.d   $f0, Valor1_double
-	l.d   $f2, Valor2_double
-	mul.d $f4, $f0, $f2
-	s.d   $f4, Result_double
-
-	j print_result_double
-
 # Divisao de inteiros
 int_divide:
 	lw   $t0, Valor1_int
@@ -365,24 +311,6 @@ int_divide:
 	sw   $t2, Result_int
 
 	j print_result_int
-
-# Divisao de floats
-float_divide:
-	l.s   $f0, Valor1_float
-	l.s   $f2, Valor2_float
-	div.s $f4, $f0, $f2
-	s.s   $f4, Result_float
-
-	j print_result_float
-
-# Divisao de doubles
-double_divide:
-	l.d   $f0, Valor1_double
-	l.d   $f2, Valor2_double
-	div.d $f4, $f0, $f2
-	s.d   $f4, Result_double
-
-	j print_result_double
 
 # Inverte o sinal de inteiro
 int_invert:
@@ -394,6 +322,45 @@ int_invert:
 
 	j print_result_int
 
+
+#  .....:: OPERACOES COM FLOATS ::.....  #
+
+# Soma de floats
+float_sum:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	add.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
+	j print_result_float
+
+# Subtracao de floats
+float_subtract:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	sub.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
+	j print_result_float
+
+# Multiplicacao de floats
+float_multiply:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	mul.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
+	j print_result_float
+
+# Divisao de floats
+float_divide:
+	l.s   $f0, Valor1_float
+	l.s   $f2, Valor2_float
+	div.s $f4, $f0, $f2
+	s.s   $f4, Result_float
+
+	j print_result_float
+
 # Inverte o sinal de float
 float_invert:
 	l.s   $f0, Valor1_float
@@ -401,6 +368,45 @@ float_invert:
 	s.s   $f4, Result_float	
 
 	j print_result_float
+
+
+#  .....:: OPERACOES COM DOUBLES ::.....  #
+
+# Soma de doubles
+double_sum:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	add.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
+
+# Subtracao de doubles
+double_subtract:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	sub.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
+
+# Multiplicacao de doubles
+double_multiply:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	mul.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
+
+# Divisao de doubles
+double_divide:
+	l.d   $f0, Valor1_double
+	l.d   $f2, Valor2_double
+	div.d $f4, $f0, $f2
+	s.d   $f4, Result_double
+
+	j print_result_double
 
 # Inverte o sinal de double
 double_invert:
