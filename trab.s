@@ -3,6 +3,7 @@
 
 .data
 	str_new_line:  .asciiz "\n"
+	str_space:     .asciiz " "
 	str_data_type: .asciiz "DataType: "
 	str_operation: .asciiz "Operation: "
 	str_result:    .asciiz "Result: "
@@ -40,8 +41,8 @@ get_type:
 	move $s0, $v0
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 	
 get_op:
@@ -57,8 +58,8 @@ get_op:
 	move $s1, $v0
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	# Checa se a operacao e' com inteiro
@@ -100,8 +101,8 @@ get_data_int:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	# Le o valor2
@@ -115,8 +116,8 @@ get_data_int:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 # Checa qual operacao sera' realizada com os inteiros
@@ -154,8 +155,8 @@ get_data_float:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	# Le o valor2
@@ -169,8 +170,8 @@ get_data_float:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 # Checa qual operacao sera' realizada com os floats
@@ -202,13 +203,46 @@ get_data_double:
 	syscall
 	# Armazena na memoria
 	s.d $f0, Valor1_double
+	# Imprime em hexadecimal (primeira parte do double)
+	mfc1 $a0, $f0
+	li   $v0, 34
+	syscall
+	# Espaco entre as duas partes
+	li $v0, 4
+	la $a0, str_space
+	syscall
+	# Imprime em hexadecimal (segunda parte do double)
+	mfc1 $a0, $f1
+	li   $v0, 34
+	syscall
+
+	# Quebra de linha
+	la $a0, str_new_line
+	li $v0, 4
+	syscall
 
 	# Le o valor2
 	li $v0, 7
 	syscall
 	# Armazena na memoria
 	s.d $f0, Valor2_double
+	# Imprime em hexadecimal (primeira parte do double)
+	mfc1 $a0, $f0
+	li   $v0, 34
+	syscall
+	# Espaco entre as duas partes
+	li $v0, 4
+	la $a0, str_space
+	syscall
+	# Imprime em hexadecimal (segunda parte do double)
+	mfc1 $a0, $f1
+	li   $v0, 34
+	syscall
 
+	# Quebra de linha
+	la $a0, str_new_line
+	li $v0, 4
+	syscall
 
 # Checa qual operacao sera' realizada com os doubles
 check_op_double:
@@ -376,19 +410,29 @@ double_invert:
 
 # Imprime o inteiro resultante
 print_result_int:
+	# Imprime String "Result: "
+	la $a0, str_result
+	li $v0, 4
+	syscall
+
 	lw $a0, Result_int
 	li $v0, 34
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	j repeat
 
 # Imprime o float resultante
 print_result_float:
+	# Imprime String "Result: "
+	la $a0, str_result
+	li $v0, 4
+	syscall
+	
 	# Imprime em hexadecimal
 	l.s  $f0, Result_float
 	mfc1 $a0, $f0
@@ -396,21 +440,36 @@ print_result_float:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	j repeat
 
 # Imprime o double resultante
 print_result_double:
-	l.d $f12, Result_double
-	li $v0, 3
+	# Imprime String "Result: "
+	la $a0, str_result
+	li $v0, 4
+	syscall
+	
+	# Imprime a primeira parte em hexadecimal
+	l.d  $f0, Result_double
+	mfc1 $a0, $f0
+	li   $v0, 34
+	syscall
+	# Espaco em branco
+	li $v0, 4
+	la $a0, str_space
+	syscall
+	# Imprime a segunda parte em hexadecimal
+	mfc1 $a0, $f1
+	li   $v0, 34
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	j repeat
@@ -423,8 +482,8 @@ repeat:
 	syscall
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	# Le a resposta e armazena em $s0
@@ -433,8 +492,8 @@ repeat:
 	move $s0, $v0
 
 	# Quebra de linha
-	li $v0, 4
 	la $a0, str_new_line
+	li $v0, 4
 	syscall
 
 	# Checa se usuario escolheu continuar a execucao
