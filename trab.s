@@ -1,6 +1,3 @@
-# $s0 = tipo de dado (i, f, d)
-# $s1 = operacao (+, -, *, /, !)
-
 .data
 	str_new_line:  .asciiz "\n"
 	str_space:     .asciiz " "
@@ -8,6 +5,7 @@
 	str_close_par: .asciiz ")"
 	str_data_type: .asciiz "DataType: "
 	str_operation: .asciiz "Operation: "
+	str_overflow:  .asciiz "Overflow\n"
 	str_result:    .asciiz "Result: "
 	str_end:       .asciiz "End of Program\n"
 	str_repeat:    .asciiz "Repeat? Y = Yes, N = No: "
@@ -273,12 +271,25 @@ check_op_double:
 
 # Soma de inteiros
 int_sum:
-	lw  $t0, Valor1_int
-	lw  $t1, Valor2_int
-	add $t2, $t0, $t1
+	lw   $t0, Valor1_int
+	lw   $t1, Valor2_int
+	addu $t2, $t0, $t1
+
+	# Checa overflow
+	xor  $t3, $t0, $t2
+	xor  $t4, $t1, $t2
+	and  $t3, $t3, $t4
+	bltz $t3, overflow
+
 	sw  $t2, Result_int
 
 	j print_result_int
+
+overflow:
+	la $a0, str_overflow
+	li $v0, 4
+	syscall
+	j repeat
 
 # Subtracao de inteiros
 int_subtract:
@@ -569,3 +580,27 @@ finish:
 	# Retorna ao sistema operacional
 	li $v0, 10
 	syscall
+
+# .ktext 0x80000180
+# 	# Salva os valores contidos em $v0 e $a0
+# 	move $k0, $v0
+# 	move $k1, $a0
+# 	# Imprime string de overflow
+# 	la   $a0, str_overflow
+# 	li   $v0, 4
+# 	syscall
+# 	# Recupera os valores de $v0 e $a0
+# 	move $v0, $k0
+# 	move $a0, $k1
+
+# 	# Pega endereco da instrucao que gerou a trap
+# 	mfc0 $k0, $14
+# 	# Passa para a instrucao seguinte a' que gerou a trap (soma 4)
+# 	addi $k0, $k0, 4
+# 	# Guarda o endereco de volta no coprocessor
+# 	mtc0 $k0, $14
+
+# 	# Retorna ao codigo
+# 	eret
+
+# .kdata
