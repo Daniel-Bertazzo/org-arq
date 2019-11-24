@@ -31,7 +31,7 @@
 
 main:
 get_type:
-	# Imprime a string "DataType:"
+	# Imprime a string "DataType: "
 	li $v0, 4
 	la $a0, str_data_type
 	syscall
@@ -48,7 +48,7 @@ get_type:
 	syscall
 	
 get_op:
-	# Imprime a string "Operation:"
+	# Imprime a string "Operation: "
 	li $v0, 4
 	la $a0, str_operation
 	syscall
@@ -82,13 +82,13 @@ get_op:
 	beq $s0, $t1, get_data_double
 	beq $s0, $t2, get_data_double
 
-# Entrada invalida -> avisa o usuario e encerra o programa
+# Operacao invalida -> avisa o usuario e reinicia o programa
 invalid_op:
 	li $v0, 4
 	la $a0, str_inv_op
 	syscall
 
-	j finish
+	j repeat
 
 # Le os valores inteiros do usuario
 get_data_int:
@@ -150,7 +150,7 @@ check_op_int:
 	li  $t0, 47
 	beq $s1, $t0, int_divide
 
-	# Checa se e' divisao ($t0 = '!')
+	# Checa se e' para inverter o sinal ($t0 = '!')
 	li  $t0, 33
 	beq $s1, $t0, int_invert
 
@@ -214,7 +214,7 @@ check_op_float:
 	li  $t0, 47
 	beq $s1, $t0, float_divide
 
-	# Checa se e' divisao ($t0 = '!')
+	# Checa se e' para inverter o sinal ($t0 = '!')
 	li  $t0, 33
 	beq $s1, $t0, float_invert
 
@@ -294,7 +294,7 @@ check_op_double:
 	li  $t0, 47
 	beq $s1, $t0, double_divide
 
-	# Checa se e' divisao ($t0 = '!')
+	# Checa se e' para inverter o sinal ($t0 = '!')
 	li  $t0, 33
 	beq $s1, $t0, double_invert
 
@@ -313,7 +313,7 @@ int_sum:
 	and  $t3, $t3, $t4
 	bltz $t3, overflow
 
-	# Guarda resultado
+	# Guarda o resultado
 	sw  $t2, Result_int
 
 	j print_result_int
@@ -330,7 +330,7 @@ int_subtract:
 	and  $t3, $t3, $t4
 	bltz $t3, overflow
 
-	# Guarda resultado
+	# Guarda o resultado
 	sw  $t2, Result_int
 	
 	j print_result_int
@@ -348,7 +348,7 @@ int_multiply:
 	and  $t3, $t3, $t4
 	bltz $t3, overflow
 
-	# Guarda resultado
+	# Guarda o resultado
 	sw   $t2, Result_int
 
 	j print_result_int
@@ -366,6 +366,7 @@ int_divide:
 	and  $t3, $t3, $t4
 	bltz $t3, overflow
 
+	# Guarda o resultado
 	sw   $t2, Result_int
 
 	j print_result_int
@@ -376,6 +377,8 @@ int_invert:
 	li  $t1, 0
 	add $t1, $t0, $t0 # $t1 = 2 * valor1
 	sub $t2, $t0, $t1 # $t2 = valor1 - 2*valor1 = -valor1
+
+	# Guarda o resultado
 	sw  $t2, Result_int
 
 	j print_result_int
@@ -391,9 +394,10 @@ float_sum:
 
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
 
+	# Guarda o resultado
 	s.s $f4, Result_float
 	
 	j print_result_float
@@ -406,9 +410,10 @@ float_subtract:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
 	
+	# Guarda o resultado
 	s.s $f4, Result_float
 
 	j print_result_float
@@ -421,9 +426,10 @@ float_multiply:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
 
+	# Guarda o resultado
 	s.s $f4, Result_float
 
 	j print_result_float
@@ -436,9 +442,10 @@ float_divide:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
 
+	# Guarda o resultado
 	s.s   $f4, Result_float
 
 	j print_result_float
@@ -447,6 +454,8 @@ float_divide:
 float_invert:
 	l.s   $f0, Valor1_float
 	neg.s $f4, $f0
+
+	# Guarda o resultado
 	s.s   $f4, Result_float	
 
 	j print_result_float
@@ -462,9 +471,10 @@ double_sum:
 
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
 
+	# Guarda o resultado
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -477,9 +487,10 @@ double_subtract:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
-	
+
+	# Guarda o resultado
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -492,9 +503,10 @@ double_multiply:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
-	
+
+	# Guarda o resultado
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -507,9 +519,10 @@ double_divide:
 	
 	# Checa overflow
 	mfc1 $t0, $f4
-	li   $t1, 2139095040
+	li   $t1, 2139095040 # $t1 = inf
 	beq  $t0, $t1, overflow
-	
+
+	# Guarda o resultado
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -518,6 +531,8 @@ double_divide:
 double_invert:
 	l.d   $f0, Valor1_double
 	neg.d $f4, $f0
+
+	# Guarda o resultado
 	s.d   $f4, Result_double	
 
 	j print_result_double
@@ -539,7 +554,7 @@ print_result_int:
 	li $v0, 4
 	syscall
 
-	# Imprime o resultado em decimal tambem
+	# Imprime em decimal tambem
 	la $a0, str_open_par
 	li $v0, 4
 	syscall
@@ -575,7 +590,7 @@ print_result_float:
 	li $v0, 4
 	syscall
 
-	# Imprime o resultado em decimal tambem
+	# Imprime em decimal tambem
 	la $a0, str_open_par
 	li $v0, 4
 	syscall
@@ -619,7 +634,7 @@ print_result_double:
 	li $v0, 4
 	syscall
 
-	# Imprime o resultado em decimal tambem
+	# Imprime em decimal tambem
 	la $a0, str_open_par
 	li $v0, 4
 	syscall
@@ -637,6 +652,7 @@ print_result_double:
 
 	j repeat
 
+# Imprime a string "Overflow" e reinicia o programa
 overflow:
 	la $a0, str_overflow
 	li $v0, 4
