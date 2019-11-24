@@ -281,23 +281,26 @@ int_sum:
 	and  $t3, $t3, $t4
 	bltz $t3, overflow
 
+	# Guarda resultado
 	sw  $t2, Result_int
 
 	j print_result_int
-
-overflow:
-	la $a0, str_overflow
-	li $v0, 4
-	syscall
-	j repeat
 
 # Subtracao de inteiros
 int_subtract:
 	lw  $t0, Valor1_int
 	lw  $t1, Valor2_int
 	sub $t2, $t0, $t1
-	sw  $t2, Result_int
 
+	# Checa overflow
+	xor  $t3, $t0, $t2
+	xor  $t4, $t1, $t2
+	and  $t3, $t3, $t4
+	bltz $t3, overflow
+
+	# Guarda resultado
+	sw  $t2, Result_int
+	
 	j print_result_int
 
 # Multiplicacao de inteiros
@@ -305,10 +308,15 @@ int_multiply:
 	lw   $t0, Valor1_int
 	lw   $t1, Valor2_int
 	mult $t0, $t1
-	# ******************************************************************************
-	# CHECAR OVERFLOW AQUI (mfhi)
-	# ******************************************************************************
 	mflo $t2
+
+	# Checa overflow
+	xor  $t3, $t0, $t2
+	xor  $t4, $t1, $t2
+	and  $t3, $t3, $t4
+	bltz $t3, overflow
+
+	# Guarda resultado
 	sw   $t2, Result_int
 
 	j print_result_int
@@ -319,6 +327,13 @@ int_divide:
 	lw   $t1, Valor2_int
 	div  $t0, $t1
 	mflo $t2
+
+	# Checa overflow
+	xor  $t3, $t0, $t2
+	xor  $t4, $t1, $t2
+	and  $t3, $t3, $t4
+	bltz $t3, overflow
+
 	sw   $t2, Result_int
 
 	j print_result_int
@@ -540,6 +555,12 @@ print_result_double:
 	li $v0, 4
 	syscall
 
+	j repeat
+
+overflow:
+	la $a0, str_overflow
+	li $v0, 4
+	syscall
 	j repeat
 
 # Checa se o usuario quer fazer outra operacao
