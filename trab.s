@@ -356,8 +356,14 @@ float_sum:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	add.s $f4, $f0, $f2
-	s.s   $f4, Result_float
 
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+
+	s.s $f4, Result_float
+	
 	j print_result_float
 
 # Subtracao de floats
@@ -365,7 +371,13 @@ float_subtract:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	sub.s $f4, $f0, $f2
-	s.s   $f4, Result_float
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+	
+	s.s $f4, Result_float
 
 	j print_result_float
 
@@ -374,7 +386,13 @@ float_multiply:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	mul.s $f4, $f0, $f2
-	s.s   $f4, Result_float
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+
+	s.s $f4, Result_float
 
 	j print_result_float
 
@@ -383,6 +401,12 @@ float_divide:
 	l.s   $f0, Valor1_float
 	l.s   $f2, Valor2_float
 	div.s $f4, $f0, $f2
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+
 	s.s   $f4, Result_float
 
 	j print_result_float
@@ -601,27 +625,3 @@ finish:
 	# Retorna ao sistema operacional
 	li $v0, 10
 	syscall
-
-# .ktext 0x80000180
-# 	# Salva os valores contidos em $v0 e $a0
-# 	move $k0, $v0
-# 	move $k1, $a0
-# 	# Imprime string de overflow
-# 	la   $a0, str_overflow
-# 	li   $v0, 4
-# 	syscall
-# 	# Recupera os valores de $v0 e $a0
-# 	move $v0, $k0
-# 	move $a0, $k1
-
-# 	# Pega endereco da instrucao que gerou a trap
-# 	mfc0 $k0, $14
-# 	# Passa para a instrucao seguinte a' que gerou a trap (soma 4)
-# 	addi $k0, $k0, 4
-# 	# Guarda o endereco de volta no coprocessor
-# 	mtc0 $k0, $14
-
-# 	# Retorna ao codigo
-# 	eret
-
-# .kdata
