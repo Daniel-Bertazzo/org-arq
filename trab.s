@@ -6,6 +6,8 @@
 	str_data_type: .asciiz "DataType: "
 	str_operation: .asciiz "Operation: "
 	str_overflow:  .asciiz "Overflow\n"
+	str_v1:        .asciiz "Insira o valor 1: "
+	str_v2:        .asciiz "Insira o valor 2: "
 	str_result:    .asciiz "Result: "
 	str_end:       .asciiz "End of Program\n"
 	str_repeat:    .asciiz "Repeat? Y = Yes, N = No: "
@@ -90,6 +92,11 @@ invalid_op:
 
 # Le os valores inteiros do usuario
 get_data_int:
+	# Imprime string "Insira o valor 1: "
+	la $a0, str_v1
+	li $v0, 4
+	syscall
+		
 	# Le o valor1
 	li $v0, 5
 	syscall
@@ -105,6 +112,11 @@ get_data_int:
 	li $v0, 4
 	syscall
 
+	# Imprime string "Insira o valor 2: "
+	la $a0, str_v2
+	li $v0, 4
+	syscall
+	
 	# Le o valor2
 	li $v0, 5
 	syscall
@@ -144,6 +156,11 @@ check_op_int:
 
 # Le os floats do usuario
 get_data_float:
+	# Imprime string "Insira o valor 1: "
+	la $a0, str_v1
+	li $v0, 4
+	syscall
+	
 	# Le o valor1
 	li $v0, 6
 	syscall
@@ -159,6 +176,11 @@ get_data_float:
 	li $v0, 4
 	syscall
 
+	# Imprime string "Insira o valor 2: "
+	la $a0, str_v2
+	li $v0, 4
+	syscall
+	
 	# Le o valor2
 	li $v0, 6
 	syscall
@@ -198,6 +220,11 @@ check_op_float:
 
 # Le os doubles do usuario
 get_data_double:
+	# Imprime string "Insira o valor 1: "
+	la $a0, str_v1
+	li $v0, 4
+	syscall
+
 	# Le o valor1
 	li $v0, 7
 	syscall
@@ -218,6 +245,11 @@ get_data_double:
 
 	# Quebra de linha
 	la $a0, str_new_line
+	li $v0, 4
+	syscall
+
+	# Imprime string "Insira o valor 2: "
+	la $a0, str_v2
 	li $v0, 4
 	syscall
 
@@ -427,6 +459,12 @@ double_sum:
 	l.d   $f0, Valor1_double
 	l.d   $f2, Valor2_double
 	add.d $f4, $f0, $f2
+
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -436,6 +474,12 @@ double_subtract:
 	l.d   $f0, Valor1_double
 	l.d   $f2, Valor2_double
 	sub.d $f4, $f0, $f2
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+	
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -445,6 +489,12 @@ double_multiply:
 	l.d   $f0, Valor1_double
 	l.d   $f2, Valor2_double
 	mul.d $f4, $f0, $f2
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+	
 	s.d   $f4, Result_double
 
 	j print_result_double
@@ -454,6 +504,12 @@ double_divide:
 	l.d   $f0, Valor1_double
 	l.d   $f2, Valor2_double
 	div.d $f4, $f0, $f2
+	
+	# Checa overflow
+	mfc1 $t0, $f4
+	li   $t1, 2139095040
+	beq  $t0, $t1, overflow
+	
 	s.d   $f4, Result_double
 
 	j print_result_double
