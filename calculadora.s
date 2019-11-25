@@ -16,15 +16,15 @@
 	Valor1_int:    .word   00000000
 	Valor2_int:    .word   00000000
 
-	Valor1_float:  .float  00000000
-	Valor2_float:  .float  00000000
+	Valor1_float:  .float  0000.0000
+	Valor2_float:  .float  0000.0000
 
-	Valor1_double: .double 0000000000000000
-	Valor2_double: .double 0000000000000000
+	Valor1_double: .double 00000000.00000000
+	Valor2_double: .double 00000000.00000000
 
 	Result_int:    .word   00000000
-	Result_float:  .float  00000000
-	Result_double: .double 0000000000000000
+	Result_float:  .float  0000.0000
+	Result_double: .double 00000000.00000000
 	
 .text
 .globl main
